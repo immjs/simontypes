@@ -11,7 +11,8 @@
   </head>
   <body>
     <div id="container">
-      <h1>Simon Types (Level <div class="keycap" id="prev">&lt;</div> <span id="currentlevel"></span> <div class="keycap" id="back">&gt;</div>)</h1>
+      <h1>Simon Types</h1>
+      <h2><span id="levelname" class="inlineblock"></span> <span class="inlineblock">(Level <div class="keycap" id="prev">&lt;</div> <span id="currentlevel"></span> <div class="keycap" id="next">&gt;</div>)</span></h2>
       <div id="buttons" class="disabled">
         <div id="progressflex">
           <div id="progress">
@@ -21,14 +22,16 @@
         </div>
         <div id="rows"></div>
       </div>
-      <h2 id="space">Press <div class="keycap" onmouseup="start()">SPACE</div> or click the buttons to (re)start</h2>
+      <h2 id="space">Press <div class="keycap" onmouseup="start()">SPACE</div> to (re)start</h2>
     </div>
-    <dialog id="win" class="dialog">
-      <h2>Level cleared!
-      <br/>
-      <div class="keycap" onmouseup="start()">Next</div>
-      <div class="keycap">Replay</div>
-      </h2>
-    </dialog>
+    <div class="center_parent">
+      <div id="win" class="dialog">
+        <h2>Level cleared!
+        <br/>
+        <div class="keycap" onmouseup="start(level + 1)">Next</div>
+        <div class="keycap">Replay</div>
+        </h2>
+      </div>
+    </div>
   </body>
 </html>

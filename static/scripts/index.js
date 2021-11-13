@@ -42,7 +42,7 @@ loadLibrary(
 
 const keysCtl = new Keys(start);
 
-let level = localStorage.getItem('currentLevel');
+window.level = localStorage.getItem('currentLevel');
 if (!level) {
   level = localStorage.getItem('maxLevel');
   if (!level) {
@@ -54,11 +54,20 @@ if (!level) {
 
 level = Number(level);
 
+function setButtons() {
+  if (level === Number(localStorage.getItem('maxLevel'))) document.querySelector('#next').classList.add('ghost');
+  if (level === 1) document.querySelector('#prev').classList.add('ghost');
+  localStorage.getItem('currentLevel')
+}
+
+setButtons();
+
 document.querySelector('#currentlevel').textContent = level;
 
-let keys, rounds, speedMult;
+let keys, rounds, speed, speedMult;
 
 function scrapeData(levelData) {
+  document.querySelector('#levelname').textContent = levelData.name;
   keysCtl.setKeys(levelData.keys.split(''));
 
   if (Array.isArray(levelData.progression)) {
@@ -77,13 +86,15 @@ function scrapeData(levelData) {
   document.querySelector('#objective').textContent = rounds;
   document.querySelector('#current').textContent = 0;
 
-  const keysStr = levelData.keys.split('\n');
+  const keysStr = keysCtl.region.map(([c]) => c).join('').trim().split('\n');
 
   const keyLength = Math.max(keysStr.length, Math.max(Math.max(...keysStr.map((v) => v.length)), keysStr.length));
 
   document.documentElement.style.setProperty('--length', keyLength);
 
   keys = levelData.keys.split('').filter((v) => !['\n', ' '].includes(v));
+
+  speed = levelData.speed;
   speedMult = levelData.speedMult;
 }
 
@@ -106,11 +117,15 @@ start.newLevel = false;
 
 let confettiInterval;
 
-async function start() {
+async function start(level = window.level) {
   if (start.started) return;
+  await Promise.all(loadLibrary.libraries);
+  if (!window.synth) window.synth = new Tone.PolySynth(Tone.Synth).toDestination();
+  synth.releaseAll();
   if (start.newLevel) {
-    level += 1;
-    document.querySelector('dialog#win').close();
+    window.level = level;
+    setButtons();
+    document.querySelector('.center_parent').style.display = 'none';
     document.querySelector('#container').classList.remove('done');
     document.querySelector('#currentlevel').textContent = level;
     
@@ -119,16 +134,15 @@ async function start() {
     scrapeData(await fetch(`/level/${level}/data`).then((v) => v.json()));
   }
   start.started = true;
-  await Promise.all(loadLibrary.libraries);
-  window.synth = new Tone.PolySynth(Tone.Synth).toDestination();
-  keysCtl.resetKeyStates();
   keysCtl.enable();
+  keysCtl.resetKeyStates();
   const queue = [];
-  let ms = 600;
+  let ms = speed || 600;
   const progress = document.querySelector('#progress');
   while (progress.firstChild) {
     progress.removeChild(progress.lastChild);
   }
+  let lost = false;
   for (let i = 0; i < rounds; i += 1) {
     document.querySelector('#current').textContent = i + 1;
     queue.push(keys[randint(keys.length)]);
@@ -141,7 +155,7 @@ async function start() {
     for (let keyIdx in queue) {
       const key = queue[keyIdx];
       progress.children[keyIdx].classList.add('played');
-      keysCtl.keyPress(key, Math.min(200, 0.9 * ms), true);
+      keysCtl.keyPress(key, Math.min(200, 0.5 * ms), true);
       if (Number(keyIdx) !== queue.length - 1) {
         await delay(ms);
       }
@@ -155,23 +169,26 @@ async function start() {
         progress.children[validKeyIdx].classList.add('valid');
       } else {
         progress.children[validKeyIdx].classList.add('failed');
-        keysCtl.disable();
-        start.started = false;
-        return;
+        lost = true;
+        break;
       }
     }
-    if (i !== rounds - 1) {
-      for (let waitUp in Object.values(keysCtl.keyStates).filter((v) => v)) {
-        await new Promise((resolve) => {
-          keysCtl.addEventListener('keyup', (key) => {
-            resolve()
-          });
+    for (let waitUp in Object.values(keysCtl.keyStates).filter((v) => v)) {
+      await new Promise((resolve) => {
+        keysCtl.addEventListener('keyup', (key) => {
+          resolve()
         });
-        void waitUp;
-      }
-      ms *= speedMult || 0.9;
-      await delay(ms);
+      });
+      void waitUp;
     }
+    ms *= speedMult || 0.9;
+    if (lost) {
+      keysCtl.resetKeyStates();
+      keysCtl.disable();
+      start.started = false;
+      return;
+    }
+    await delay(ms);
   }
   const defaults = { startVelocity: 10, spread: 360, ticks: 60, zIndex: 100 };
 
@@ -179,22 +196,26 @@ async function start() {
     return Math.random() * (max - min) + min;
   }
 
+  const startTime = Date.now();
+  const delayTime = 3000;
+
   confettiInterval = setInterval(function() {
+    if (Date.now() - startTime > delayTime) return clearInterval(confettiInterval);
     const particleCount = 50;
     // since particles fall down, start a bit higher than random
     confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
     confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-  }, 250);
+  }, 500);
   document.querySelector('#container').classList.add('done');
-  document.querySelector('dialog#win').showModal();
+  document.querySelector('.center_parent').style.display = 'flex';
   keysCtl.lock();
   localStorage.setItem('currentLevel', level + 1);
-  if (localStorage.getItem('maxLevel') < localStorage.getItem('currentLevel')) {
-    localStorage.setItem('maxLevel', localStorage.getItem('maxLevel'));
+  if (Number(localStorage.getItem('maxLevel')) < Number(localStorage.getItem('currentLevel'))) {
+    localStorage.setItem('maxLevel', localStorage.getItem('currentLevel'));
   }
   start.newLevel = true;
   start.started = false;
-};
+}
 
 window.start = start;
 
@@ -204,11 +225,12 @@ document.body.addEventListener('keyup', (e) => {
   }
 });
 document.querySelector('#prev').addEventListener('mouseup', (e) => {
-  if (level < 2) return;
+  if (level <= 1) return;
   localStorage.setItem('currentLevel', level - 1);
   location.reload();
 });
 document.querySelector('#next').addEventListener('mouseup', (e) => {
-  localStorage.setItem('currentLevel', Math.max(level + 1, localStorage.getItem('maxLevel')));
+  if (level >= Number(localStorage.getItem('maxLevel'))) return;
+  localStorage.setItem('currentLevel', Math.max(level + 1));
   location.reload();
 });

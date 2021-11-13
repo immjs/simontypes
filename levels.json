@@ -22,11 +22,21 @@
   {
     "name": "LONGER.",
     "keys": "ghbn",
-    "rounds": 20
+    "rounds": 15
   },
   {
     "name": "Spaced out",
     "keys": "ryvn",
+    "rounds": 10
+  },
+  {
+    "name": "Moar spaced out",
+    "keys": "eycn",
+    "rounds": 10
+  },
+  {
+    "name": "",
+    "keys": "eycn",
     "rounds": 10
   }
 ]

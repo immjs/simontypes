@@ -54,14 +54,15 @@ body {
 .keycap {
   display: inline-block;
   background-color: #ccc;
-  border-radius: 6px;
-  box-shadow: inset 0 0 0 3px #aaa,
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 5px #aaa,
     0 10px 0 0 #aaa;
   color: #888;
   width: max-content;
   vertical-align: middle;
   font-size: 0.75em;
-  padding: 0.25em 0.5em 0.25em 0.5em;
+  padding: 15px;
+  line-height: 0.5;
   margin-left: 2px;
   margin-right: 2px;
   position: relative;
@@ -121,12 +122,12 @@ body {
 
 .add-height, .keycap:active:not(.game) {
   top: 10px;
-  box-shadow: inset 0 0 0 3px #aaa;
+  box-shadow: inset 0 0 0 5px #aaa;
   background-color: #bbb;
   color: #999;
 }
 
-.button:not(.ghost) .game:active, .game.add-height {
+.game.add-height {
   top: calc(var(--width) / 6);
   background-color: var(--bg);
   box-shadow: inset 0 0 0 calc(var(--width) / 13) var(--bc),
@@ -137,7 +138,7 @@ body {
   margin-left: 10px;
 }
 
-#buttons.disabled .button:not(.ghost) {
+#buttons.disabled .keycap:not(.ghost) {
   filter: invert(1);
 }
 
@@ -223,10 +224,12 @@ body {
 }
 
 h1 {
-  font-size: 3em;
+  font-size: min(9vmin, 40px);
 }
 h2 {
-  font-size: 2em;
+  margin-top: 0;
+  line-height: 2;
+  font-size: min(5vmin, 30px);
 }
 
 #win {
@@ -240,3 +243,18 @@ h2 {
   font-size: calc(var(--width) / 8);
 }
 
+.center_parent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+  justify-content: center;
+  align-items: center;
+  display: none;
+}
+
+.inlineblock {
+  display: inline-block;
+}
