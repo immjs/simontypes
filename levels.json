@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Simple",
+    "keys": "gh",
+    "rounds": 5
+  },
+  {
+    "name": "Three letters",
+    "keys": "ghj",
+    "rounds": 5
+  },
+  {
+    "name": "Longer",
+    "keys": "ghj",
+    "rounds": 10
+  },
+  {
+    "name": "Four letters",
+    "keys": "ghbn",
+    "rounds": 10
+  },
+  {
+    "name": "LONGER.",
+    "keys": "ghbn",
+    "rounds": 20
+  },
+  {
+    "name": "Spaced out",
+    "keys": "ryvn",
+    "rounds": 10
+  }
+]

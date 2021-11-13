@@ -31,6 +31,10 @@ body {
   flex-direction: column;
 }
 
+#container.done {
+  filter: brightness(0.7);
+}
+
 #buttons {
   /* display: flex;
   justify-content: center;
@@ -50,8 +54,9 @@ body {
 .keycap {
   display: inline-block;
   background-color: #ccc;
-  border-radius: calc(100% / 5);
-  box-shadow: inset 0 0 0 3px #aaa;
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 3px #aaa,
+    0 10px 0 0 #aaa;
   color: #888;
   width: max-content;
   vertical-align: middle;
@@ -67,13 +72,23 @@ body {
 .game {
   width: calc(var(--width) - 20px);
   height: calc(var(--width) - 20px);
-  box-shadow: inset 0 0 0 calc(var(--width) / 13) #aaa;
-  font-size: 4em;
+  box-shadow: inset 0 0 0 calc(var(--width) / 13) #aaa,
+    0 calc(var(--width) / 6) 0 #aaa;
+  border-radius: calc(var(--width) / 5);
+  font-size: calc(var(--width) / 3);
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0px;
   margin: 0;
+}
+
+.ghost {
+  /* clip-path: url(mask1.png);
+  mask-image: url(mask1.png);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat; */
+  filter: brightness(0.2);
 }
 
 /* .keyborder {
@@ -85,57 +100,69 @@ body {
   z-index: 3;
 } */
 
-.keycap::after {
+/* .keycap::after {
   content: '';
   display: block;
   width: 100%;
   height: 100%;
-  margin-top: calc(100% / 6);
   background-color: #aaaaaa;
-  border-radius: calc(100% / 5);
+  border-radius: 6px;
   position: absolute;
-  top: 0;
+  top: 10px;
   left: 0;
   z-index: -10;
   transform: translateZ(-1px);
 }
 
-.add-height, .keycap:active {
-  margin-top: calc(100% / 6);
+.game::after {
+  border-radius: calc(var(--width) / 5);
+  top: calc(var(--width) / 6);
+} */
+
+.add-height, .keycap:active:not(.game) {
+  top: 10px;
+  box-shadow: inset 0 0 0 3px #aaa;
   background-color: #bbb;
   color: #999;
 }
 
-.game:active, .game.add-height {
+.button:not(.ghost) .game:active, .game.add-height {
+  top: calc(var(--width) / 6);
   background-color: var(--bg);
   box-shadow: inset 0 0 0 calc(var(--width) / 13) var(--bc),
     0 0 calc(var(--width) / 10) 0 var(--bc);
-}
-
-.keycap:active::after, .add-height::after {
-  margin-top: 0;
 }
 
 .button + .button {
   margin-left: 10px;
 }
 
-#buttons.disabled .button {
+#buttons.disabled .button:not(.ghost) {
   filter: invert(1);
+}
+
+#buttons.disabled .ghost {
+  filter: brightness(1.2) invert(1);
+  color: black;
 }
 
 #progressflex {
   width: 100%;
-  height: calc(var(--width) / 7);
+  height: 2vh;
+  font-size: 2vh;
   display: flex;
+  flex-direction: row;
+  gap: 15px;
+  align-items: center;
   margin-bottom: 20px;
+  margin-top: 5px;
 }
 
 #progress {
   flex: 1;
   height: 100%;
   /* border: 5px solid #aaa; */
-  border-radius: calc(var(--width) / 10);
+  border-radius: 1vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -173,15 +200,43 @@ body {
 #progress .failed {
   background-color: #e68;
 }
-.row + .row {
+.row:not(:empty) + .row {
   margin-top: -35px;
 }
+
+.row:nth-child(1):not(:empty) ~ .row {
+  margin-left: calc(0.25 * var(--width));
+}
+
+.row:nth-child(2):not(:empty) ~ .row {
+  margin-left: calc(0.5 * var(--width));
+}
+
 .row {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  width: max-content;
+  /* gap: 10px; */
+}
+.row:not(:empty) {
+  height: calc(var(--width) * 7 / 6);
 }
 
 h1 {
-  font-family: 32%;
+  font-size: 3em;
 }
+h2 {
+  font-size: 2em;
+}
+
+#win {
+  box-shadow: inset 0 0 0 calc(var(--width) / 13) #aaa/* ,
+    0 calc(var(--width) / 6) 0 #aaa */;
+  border: none;
+  background-color: #ccc;
+  border-radius: 20px;
+  color: #555;
+  padding: 20px;
+  font-size: calc(var(--width) / 8);
+}
+

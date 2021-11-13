@@ -3,24 +3,32 @@
   <head>
     <title>Simon Types</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="Simon says compatible with the keyboard.">
+    <meta name="description" content="Simon says with keyboard support.">
     <link href="styles.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.32/Tone.min.js" integrity="sha512-5bi4sAolb6DHch5jbwQQ7S4HzdMbP4/mSwxsE5K3h0OcJgNXXH+5zQHY1j60JOoNlL4cxhUrVCYqksmtqIF0Fg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="sounds.js"></script>
-    <script src="keys.js"></script>
-    <script src="index.js" defer></script>
+    <script src="scripts/sounds.js"></script>
+    <script src="scripts/keys.js"></script>
+    <script src="scripts/index.js" defer type="module"></script>
   </head>
   <body>
     <div id="container">
-      <h1>Simon Types (Level <div class="keycap">&lt;</div><span id="currentlevel"></span><div class="keycap">&gt;</div>)</h1>
+      <h1>Simon Types (Level <div class="keycap" id="prev">&lt;</div> <span id="currentlevel"></span> <div class="keycap" id="back">&gt;</div>)</h1>
       <div id="buttons" class="disabled">
         <div id="progressflex">
           <div id="progress">
             <div></div>
           </div>
+          <h3><span id="current"></span>/<span id="objective"></span></h3>
         </div>
+        <div id="rows"></div>
       </div>
       <h2 id="space">Press <div class="keycap" onmouseup="start()">SPACE</div> or click the buttons to (re)start</h2>
     </div>
+    <dialog id="win" class="dialog">
+      <h2>Level cleared!
+      <br/>
+      <div class="keycap" onmouseup="start()">Next</div>
+      <div class="keycap">Replay</div>
+      </h2>
+    </dialog>
   </body>
 </html>
