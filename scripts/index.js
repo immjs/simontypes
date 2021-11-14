@@ -40,7 +40,7 @@ loadLibrary(
   'https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js',
 );
 
-const keysCtl = new Keys(start);
+window.keysCtl = new Keys(start);
 
 window.level = localStorage.getItem('currentLevel');
 if (!level) {
@@ -97,7 +97,7 @@ function scrapeData(levelData) {
   speedMult = levelData.speedMult;
 }
 
-scrapeData(await fetch(`/level/${level}/data`).then((v) => v.json()));
+scrapeData((await fetch('/levels.json').then((v) => v.json()))[level]);
 
 const catchKeydown = {};
 
@@ -120,7 +120,6 @@ async function start(level = window.level) {
   if (start.started) return;
   await Promise.all(loadLibrary.libraries);
   if (!window.synth) window.synth = new Tone.PolySynth(Tone.Synth).toDestination();
-  synth.releaseAll();
   if (start.newLevel) {
     window.level = level;
     setButtons();
@@ -130,7 +129,7 @@ async function start(level = window.level) {
     
     clearInterval(confettiInterval);
     
-    scrapeData(await fetch(`/level/${level}/data`).then((v) => v.json()));
+    scrapeData((await fetch('/levels.json').then((v) => v.json()))[level]);
   }
   start.started = true;
   keysCtl.enable();
@@ -174,16 +173,17 @@ async function start(level = window.level) {
     }
     while (Object.values(keysCtl.keyStates).filter((v) => v).length > 0) {
       await new Promise((resolve) => {
-        keysCtl.addEventListener('keyup', (key) => {
-          resolve()
+        keysCtl.addEventListener('keyup', () => {
+          resolve();
         });
       });
-      void waitUp;
     }
     ms *= speedMult || 0.9;
     if (lost) {
+      keysCtl.releaseAll();
       keysCtl.resetKeyStates();
       keysCtl.disable();
+      synth.releaseAll();
       start.started = false;
       return;
     }
@@ -233,3 +233,7 @@ document.querySelector('#next').addEventListener('mouseup', (e) => {
   localStorage.setItem('currentLevel', Math.max(level + 1));
   location.reload();
 });
+
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/scripts/sw.js');
+};
