@@ -1,3 +1,7 @@
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js');
+};
+
 window.delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 document.body.focus();
@@ -63,7 +67,7 @@ function setButtons() {
 
 setButtons();
 
-let keys, rounds, speed, speedMult;
+let keys, rounds, speed, speedMult, order;
 
 function scrapeData(levelData) {
   document.querySelector('#levelname').textContent = levelData.n;
@@ -74,9 +78,9 @@ function scrapeData(levelData) {
   } else {
     if (!levelData.p) levelData.p = {};
     keysCtl.setProgression(
-      levelData.p.s || 'C4',
+      levelData.p.r || 'C4',
       levelData.p.p || 'PENTATONIC',
-      levelData.p.c || 'MAJOR',
+      levelData.p.c || 'MAJOR_NORMAL',
       levelData.p.l || 4,
     );
   }
@@ -95,7 +99,10 @@ function scrapeData(levelData) {
 
   speed = levelData.s;
   speedMult = levelData.M;
+
+  order = levelData.o;
 }
+
 const levels = await fetch('/levels.min.json').then((v) => v.json());
 scrapeData(levels[level - 1]);
 
@@ -131,25 +138,31 @@ async function start(level = window.level) {
     
     scrapeData(levels[level - 1]);
   }
+
   start.started = true;
   keysCtl.enable();
   keysCtl.resetKeyStates();
+
   const queue = [];
   let ms = speed || 600;
   const progress = document.querySelector('#progress');
+
   while (progress.firstChild) {
     progress.removeChild(progress.lastChild);
   }
+
   let lost = false;
   for (let i = 0; i < (rounds || Infinity); i += 1) {
     document.querySelector('#current').textContent = i + 1;
-    queue.push(keys[randint(keys.length)]);
+    queue.push(order ? order[i % order.length] : keys[randint(keys.length)]);
+
     for (let element of progress.children) {
       element.classList.remove('valid');
     }
+
     progress.append(document.createElement('div'));
-    
     keysCtl.lock();
+
     for (let keyIdx in queue) {
       const key = queue[keyIdx];
       progress.children[keyIdx].classList.add('played');
@@ -158,11 +171,14 @@ async function start(level = window.level) {
         await delay(ms);
       }
     }
+
     keysCtl.unlock();
+
     for (let validKeyIdx in queue) {
       const validKey = queue[validKeyIdx];
       const keyGuess = await waitForInput();
       progress.children[validKeyIdx].classList.remove('played');
+
       if (keyGuess === validKey) {
         progress.children[validKeyIdx].classList.add('valid');
       } else {
@@ -171,6 +187,7 @@ async function start(level = window.level) {
         break;
       }
     }
+
     while (Object.values(keysCtl.keyStates).filter((v) => v).length > 0) {
       await new Promise((resolve) => {
         keysCtl.addEventListener('keyup', () => {
@@ -178,7 +195,9 @@ async function start(level = window.level) {
         });
       });
     }
+
     ms *= speedMult || 0.9;
+
     if (lost) {
       keysCtl.releaseAll();
       keysCtl.resetKeyStates();
@@ -187,6 +206,7 @@ async function start(level = window.level) {
       start.started = false;
       return;
     }
+
     await delay(ms);
   }
   const defaults = { startVelocity: 10, spread: 360, ticks: 60, zIndex: 100 };
@@ -201,17 +221,21 @@ async function start(level = window.level) {
   confettiInterval = setInterval(function() {
     if (Date.now() - startTime > delayTime) return clearInterval(confettiInterval);
     const particleCount = 50;
+
     // since particles fall down, start a bit higher than random
     confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
     confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
   }, 500);
+
   document.querySelector('#container').classList.add('done');
   document.querySelector('.center_parent').style.display = 'flex';
   keysCtl.lock();
   localStorage.setItem('currentLevel', level + 1);
+
   if (Number(localStorage.getItem('maxLevel')) < Number(localStorage.getItem('currentLevel'))) {
     localStorage.setItem('maxLevel', localStorage.getItem('currentLevel'));
   }
+
   start.newLevel = true;
   start.started = false;
 }
@@ -223,17 +247,15 @@ document.body.addEventListener('keyup', (e) => {
     start();
   }
 });
+
 document.querySelector('#prev').addEventListener('mouseup', (e) => {
   if (level <= 1) return;
   localStorage.setItem('currentLevel', level - 1);
   location.reload();
 });
+
 document.querySelector('#next').addEventListener('mouseup', (e) => {
   if (level >= Number(localStorage.getItem('maxLevel'))) return;
   localStorage.setItem('currentLevel', Math.max(level + 1));
   location.reload();
 });
-
-if('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
-};

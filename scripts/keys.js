@@ -53,8 +53,8 @@ class Keys extends EventTarget {
     this.keyStates = Object.fromEntries(keys.map((key) => [key, false]));
     this.keys = keys.filter((v) => !['\n', ' '].includes(v))
   }
-  setProgression(start, progName, chordName, chordLen) {
-    const currentProgression = Sounds.applyProgression(start, Sounds.PROGRESSIONS[progName], this.keys.length);
+  setProgression(root, progName, chordName, chordLen) {
+    const currentProgression = Sounds.applyProgression(root, Sounds.PROGRESSIONS[progName], this.keys.length);
     this.progression = Object.fromEntries(this.keys.map((key, i) => [
       key,
       Sounds.applyProgression(currentProgression[i], Sounds.PROGRESSIONS[chordName], chordLen),
