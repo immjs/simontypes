@@ -1,0 +1,5 @@
+android/
+# What I did:
+# `yarn dlx -p @bubblewrap/cli bubblewrap init --manifest https://simontypes.immjs.dev/simontypes.webmanifest`
+# `yarn dlx -p @bubblewrap/cli bubblewrap build`
+# Moved app-release-signed.apk to root
