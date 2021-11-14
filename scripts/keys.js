@@ -90,7 +90,7 @@ class Keys extends EventTarget {
           this.start();
         }
       }).bind(this)).bind(this);
-      const i = this.rows.querySelectorAll('.button').length;
+      const i = this.rows.querySelectorAll('.keycap:not(.ghost)').length;
       const currentElement = document.createElement('div');
       currentElement.id = key;
       currentElement.classList.add('button');
