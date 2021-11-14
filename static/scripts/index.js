@@ -57,12 +57,11 @@ level = Number(level);
 function setButtons() {
   if (level === Number(localStorage.getItem('maxLevel'))) document.querySelector('#next').classList.add('ghost');
   if (level === 1) document.querySelector('#prev').classList.add('ghost');
-  localStorage.getItem('currentLevel')
+  document.querySelector('#currentlevel').textContent = level;
+  localStorage.setItem('currentLevel', level);
 }
 
 setButtons();
-
-document.querySelector('#currentlevel').textContent = level;
 
 let keys, rounds, speed, speedMult;
 
@@ -173,7 +172,7 @@ async function start(level = window.level) {
         break;
       }
     }
-    for (let waitUp in Object.values(keysCtl.keyStates).filter((v) => v)) {
+    while (Object.values(keysCtl.keyStates).filter((v) => v).length > 0) {
       await new Promise((resolve) => {
         keysCtl.addEventListener('keyup', (key) => {
           resolve()
