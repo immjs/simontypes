@@ -10,8 +10,9 @@
     },
     {
         "src": "/pwa512.png",
-        "sizes": "152x512",
-        "type": "image/png"
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
     }
   ],
   "start_url": "/",
