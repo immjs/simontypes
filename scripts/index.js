@@ -1,5 +1,19 @@
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
+if ('serviceWorker' in navigator) { // Stolen from https://stackoverflow.com/questions/40100922/activate-updated-service-worker-on-refresh
+  navigator.serviceWorker.register('/sw.js').then((reg) => {
+    console.log(reg);
+    function awaitStateChange() {
+      reg.installing.addEventListener('statechange', function() {
+        if (reg.waiting && reg.active) {
+          // reg.active.postMessage('quit');
+          reg.waiting.postMessage('skipWaiting');
+        }
+      });
+    }
+    if (!reg) return;
+    if (reg.waiting && reg.active) return reg.waiting.postMessage('skipWaiting');
+    if (reg.installing) awaitStateChange();
+    reg.addEventListener('updatefound', awaitStateChange);
+  });
 };
 
 window.delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

@@ -24,7 +24,6 @@ self.addEventListener('install', (e) => {
   })());
 });
 
-// Fetching content using Service Worker
 self.addEventListener('fetch', (e) => {
   e.respondWith((async () => {
     const r = await caches.match(e.request);
@@ -37,3 +36,14 @@ self.addEventListener('fetch', (e) => {
     return response;
   })());
 });
+
+// Stolen from https://stackoverflow.com/questions/40100922/activate-updated-service-worker-on-refresh
+self.addEventListener('message', (event) => {
+  if (!event.data) {
+    return;
+  }
+
+  if (event.data === 'skipWaiting') {
+    self.skipWaiting();
+  }
+}); // test 3
