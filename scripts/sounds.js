@@ -5,6 +5,7 @@ const Sounds = {
     MAJOR: [3, 4],
     MAJOR_NORMAL: [3, 4, 5],
     PENTATONIC: [2, 2, 3, 2, 3],
+    YELTSA: [2, 2, 1, 2, 2, 3],
     MINOR: [4, 3],
     MAJOR_NORMAL: [4, 3, 5],
     LINEAR: [1],
