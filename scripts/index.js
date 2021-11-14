@@ -96,8 +96,10 @@ function scrapeData(levelData) {
   speed = levelData.speed;
   speedMult = levelData.speedMult;
 }
+const levels = await fetch('/levels.json').then((v) => v.json());
+scrapeData(levels[level]);
 
-scrapeData((await fetch('/levels.json').then((v) => v.json()))[level]);
+document.querySelector('#loading').style.display = 'none';
 
 const catchKeydown = {};
 
@@ -129,7 +131,7 @@ async function start(level = window.level) {
     
     clearInterval(confettiInterval);
     
-    scrapeData((await fetch('/levels.json').then((v) => v.json()))[level]);
+    scrapeData(levels[level]);
   }
   start.started = true;
   keysCtl.enable();
