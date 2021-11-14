@@ -143,7 +143,7 @@ async function start(level = window.level) {
     progress.removeChild(progress.lastChild);
   }
   let lost = false;
-  for (let i = 0; i < rounds; i += 1) {
+  for (let i = 0; i < (rounds || Infinity); i += 1) {
     document.querySelector('#current').textContent = i + 1;
     queue.push(keys[randint(keys.length)]);
     for (let element of progress.children) {
