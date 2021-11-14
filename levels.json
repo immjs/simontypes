@@ -36,7 +36,7 @@
   },
   {
     "name": "I'm not inspired",
-    "keys": "zyxn",
+    "keys": "wyxn",
     "rounds": 15
   },
   {
@@ -50,14 +50,23 @@
     "rounds": 15
   },
   {
-    "name": "Hexagon spaced out",
-    "keys": "tufhkvn",
+    "name": "One over two?",
+    "keys": "etfhcb",
     "rounds": 15
   },
   {
-    "name": "Hexagon spaced out",
-    "keys": "tufhkvn",
+    "name": "Arrows...",
+    "keys": "wasd",
     "rounds": 15
+  },
+  {
+    "name": "... over vim?",
+    "keys": "hjkl",
+    "rounds": 15
+  },
+  {
+    "name": "More's to come",
+    "keys": "end"
   },
   {
     "name": "Ckir progression?",
