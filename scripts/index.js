@@ -98,6 +98,7 @@ function scrapeData(levelData) {
   keys = levelData.k.split('').filter((v) => !['\n', ' '].includes(v));
 
   speed = levelData.s;
+  // speedMult = levelData.M || Number.isNaN(+rounds) ? (220 / speed) ** (1 / rounds) : 0.95;
   speedMult = levelData.M;
 
   order = levelData.o;
@@ -139,9 +140,9 @@ async function start(level = window.level) {
     document.querySelector('.center_parent').style.display = 'none';
     document.querySelector('#container').classList.remove('done');
     document.querySelector('#currentlevel').textContent = level;
-    
+
     clearInterval(confettiInterval);
-    
+
     scrapeData(levels[level - 1]);
   }
 
@@ -172,9 +173,9 @@ async function start(level = window.level) {
     for (let keyIdx in queue) {
       const key = queue[keyIdx];
       progress.children[keyIdx].classList.add('played');
-      keysCtl.keyPress(key, Math.min(200, 0.5 * ms), true);
+      keysCtl.keyPress(key, Math.max(0.5 * ms, 220), true);
       if (Number(keyIdx) !== queue.length - 1) {
-        await delay(ms);
+        await delay(Math.max(ms, 240));
       }
     }
 
