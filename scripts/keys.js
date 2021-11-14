@@ -1,4 +1,4 @@
-const keyboard = [...'azertyuiop\nqsdfghjklm\nwxcvbn'];
+const keyboard = [...'qwertyuiop\nasdfghjkl\nzxcvbnm'];
 
 class Keys extends EventTarget {
   constructor(start) {
@@ -7,7 +7,7 @@ class Keys extends EventTarget {
     this.rows = document.querySelector('#rows');
     this.addNewLine();
     const listener = ((prop) => ((key) => {
-      const currentKey = String.fromCharCode(key.keyCode).toLowerCase();
+      const currentKey = key.code.match(/Key([A-Z])/)?.[1]?.toLowerCase();
       if (this.keys.includes(currentKey)) {
         this[prop](currentKey);
       }
