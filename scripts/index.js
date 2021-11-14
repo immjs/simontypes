@@ -66,23 +66,23 @@ setButtons();
 let keys, rounds, speed, speedMult;
 
 function scrapeData(levelData) {
-  document.querySelector('#levelname').textContent = levelData.name;
-  keysCtl.setKeys(levelData.keys.split(''));
+  document.querySelector('#levelname').textContent = levelData.n;
+  keysCtl.setKeys(levelData.k.split(''));
 
-  if (Array.isArray(levelData.progression)) {
-    keysCtl.setRawProgression(levelData.progression);
+  if (Array.isArray(levelData.p)) {
+    keysCtl.setRawProgression(levelData.p);
   } else {
-    if (!levelData.progression) levelData.progression = {};
+    if (!levelData.p) levelData.p = {};
     keysCtl.setProgression(
-      levelData.progression.start || 'C4',
-      levelData.progression.progName || 'PENTATONIC',
-      levelData.progression.chordName || 'MAJOR',
-      levelData.progression.chordLen || 4,
+      levelData.p.s || 'C4',
+      levelData.p.p || 'PENTATONIC',
+      levelData.p.c || 'MAJOR',
+      levelData.p.l || 4,
     );
   }
 
-  rounds = levelData.rounds;
-  document.querySelector('#objective').textContent = rounds;
+  rounds = levelData.r;
+  document.querySelector('#objective').textContent = rounds || '(Inf)';
   document.querySelector('#current').textContent = 0;
 
   const keysStr = keysCtl.region.map(([c]) => c).join('').trim().split('\n');
@@ -91,15 +91,13 @@ function scrapeData(levelData) {
 
   document.documentElement.style.setProperty('--length', keyLength);
 
-  keys = levelData.keys.split('').filter((v) => !['\n', ' '].includes(v));
+  keys = levelData.k.split('').filter((v) => !['\n', ' '].includes(v));
 
-  speed = levelData.speed;
-  speedMult = levelData.speedMult;
+  speed = levelData.s;
+  speedMult = levelData.M;
 }
-const levels = await fetch('/levels.json').then((v) => v.json());
+const levels = await fetch('/levels.min.json').then((v) => v.json());
 scrapeData(levels[level]);
-
-document.querySelector('#loading').style.display = 'none';
 
 const catchKeydown = {};
 
