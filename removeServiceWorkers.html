@@ -1,3 +1,6 @@
 <script>
-  navigator.serviceWorker.getRegistrations().then((regs) => regs.forEach((reg) => reg.unregister()))
+  navigator.serviceWorker.getRegistrations()
+    .then((regs) => Promise.all(regs.map((reg) => reg.unregister())))
+    .then(() => alert('Removed successfully'))
+    .catch((err) => alert(err.toString()))
 </script>
