@@ -35,8 +35,38 @@
     "rounds": 10
   },
   {
-    "name": "",
-    "keys": "eycn",
-    "rounds": 10
+    "name": "I'm not inspired",
+    "keys": "zyxn",
+    "rounds": 15
+  },
+  {
+    "name": "Hexagon",
+    "keys": "yughjbn",
+    "rounds": 15
+  },
+  {
+    "name": "Hexagon spaced out",
+    "keys": "tufhkvn",
+    "rounds": 15
+  },
+  {
+    "name": "Hexagon spaced out",
+    "keys": "tufhkvn",
+    "rounds": 15
+  },
+  {
+    "name": "Hexagon spaced out",
+    "keys": "tufhkvn",
+    "rounds": 15
+  },
+  {
+    "name": "Ckir progression?",
+    "keys": "ertyui",
+    "progression": {
+      "progName": "YELTSA",
+      "chordLen": 1
+    },
+    "order": "eryriiueryruuyeryryuteuy",
+    "rounds": 24
   }
 ]
