@@ -104,6 +104,12 @@ function scrapeData(levelData) {
 }
 
 const levels = await fetch('/levels.min.json').then((v) => v.json());
+if (!levels[level - 1]) {
+  localStorage.setItem('currentLevel', 0);
+  localStorage.setItem('maxLevel', 0);
+  location.reload();
+}
+
 scrapeData(levels[level - 1]);
 
 const catchKeydown = {};
